@@ -8,6 +8,8 @@ import {
 import MainLayout from "./layouts/MainLayout";
 import ComingSoon from "./components/ComingSoon";
 import Home from "./pages/Home";
+import Album from "./pages/Album";
+import Search from "./pages/Search";
 
 function App() {
   return (
@@ -18,7 +20,10 @@ function App() {
 
         {/* Only the worthy may enter (or the persistent) */}
         <Route element={<MainLayout />}>
+          <Route index element={<Home />} />
           <Route path="/home" element={<Home />} />
+          <Route path="/album/:id" element={<Album />} />
+          <Route path="search" element={<Search />} />
 
           {/* The 404 dimension */}
           <Route path="*" element={<ComingSoon />} />
