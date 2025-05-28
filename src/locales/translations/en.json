@@ -1,0 +1,13 @@
+{
+  "common": {
+    "home": "Home",
+    "welcome": "Welcome",
+    "title": "Zia Library",
+    "description": "Start your journey with Zia Library, here you'll find tips and information to help you make the most of our services"
+  },
+  "sidebar": {
+    "home": "Home",
+    "settings": "Settings",
+    "template": "Template"
+  }
+}

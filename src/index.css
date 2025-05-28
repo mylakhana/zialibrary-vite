@@ -1,0 +1,15 @@
+@import '@fontsource/ibm-plex-sans-arabic';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html[lang="ar"] {
+    font-family: "IBM Plex Sans Arabic", sans-serif;
+  }
+}
+
+.group:hover .group-hover\:rotate-180 {
+    transform: rotate(180deg);
+  }

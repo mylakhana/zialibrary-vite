@@ -1,0 +1,78 @@
+export const PageHeader = ({
+  prefix,
+  title,
+  description,
+  endContent,
+  startContent,
+}) => {
+  return (
+    <>
+      <div className="flex flex-row">
+        <div
+          className={`mx-6 flex ${
+            startContent ? "w-[3.5rem] ml-8 mr-4 rtl:mr-8 rtl:ml-4" : "w-0"
+          } justify-center items-center`}
+        >
+          {startContent}
+        </div>
+        <div className="flex-1">
+          <div className="flex flex-col">
+            <div className="flex flex-col mt-8 font-[500]">
+              <p className="text-[#17C964] text-[7px] lg:text-[14px]">
+                {prefix}
+              </p>
+              <p className="lg:text-[32px] text-[16px] font-medium sm:text-[24px] md:text-[28px]">
+                {title}
+              </p>
+            </div>
+
+            {/* Description Section */}
+            <div className="flex flex-col mt-4">
+              {description && (
+                <p className="text-[14px] sm:text-[12px] md:text-[13px] lg:max-w-[600px] text-zinc-500 dark:text-zinc-400">
+                  {description}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="p-10 flex items-center justify-center">
+          {endContent}
+        </div>
+      </div>
+
+      {/* Divider */}
+      <div className="px-8">
+        <div className="h-[1px] w-full bg-black/15 dark:bg-white/15 mt-6"></div>
+      </div>
+    </>
+  );
+};
+
+export const formatZodErrors = (errors, t) => {
+  let formattedErrors = {};
+  errors.forEach((err) => {
+    const path = err.path.join(".");
+
+    if (!formattedErrors[path]) {
+      formattedErrors[path] = [];
+    }
+
+    formattedErrors[path] = t(err.message);
+  });
+  return formattedErrors;
+};
+
+export const KeyValueWidget = ({ title, value, valueWidget, className }) => {
+  return (
+    <div className="flex justify-between items-center">
+      <p className="text-gray-500 dark:text-gray-400 text-xl">{title}</p>
+      {valueWidget ? (
+        valueWidget
+      ) : (
+        <p className={`text-xl font-light ${className}`}>{value}</p>
+      )}
+    </div>
+  );
+};
