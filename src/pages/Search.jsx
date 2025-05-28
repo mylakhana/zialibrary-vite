@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import TrackCard from "../components/TrackCard";
 
 function Search() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -13,8 +14,8 @@ function Search() {
       { id: 1, type: "album", title: "Album 1", artist: "Artist 1", image: "https://picsum.photos/200/200" },
       { id: 2, type: "artist", name: "Artist 2", image: "https://picsum.photos/200/201" },
       { id: 3, type: "playlist", title: "Playlist 1", creator: "User 1", image: "https://picsum.photos/200/202" },
-      { id: 4, type: "album", title: "Album 2", artist: "Artist 3", image: "https://picsum.photos/200/203" },
-      { id: 5, type: "artist", name: "Artist 4", image: "https://picsum.photos/200/204" },
+      { id: 4, type: "track", title: "Track 1", artist: "Artist 3", duration: "3:45", image: "https://picsum.photos/200/203" },
+      { id: 5, type: "track", title: "Track 2", artist: "Artist 4", duration: "4:20", image: "https://picsum.photos/200/204" },
       { id: 6, type: "playlist", title: "Playlist 2", creator: "User 2", image: "https://picsum.photos/200/205" },
     ],
     albums: [
@@ -29,6 +30,26 @@ function Search() {
       { id: 3, title: "Playlist 1", creator: "User 1", image: "https://picsum.photos/200/202" },
       { id: 6, title: "Playlist 2", creator: "User 2", image: "https://picsum.photos/200/205" },
     ],
+    tracks: [
+      { id: 4, title: "Track 1", artist: "Artist 3", duration: "3:45", image: "https://picsum.photos/200/203" },
+      { id: 5, title: "Track 2", artist: "Artist 4", duration: "4:20", image: "https://picsum.photos/200/204" },
+      { id: 7, title: "Track 3", artist: "Artist 5", duration: "3:15", image: "https://picsum.photos/200/206" },
+      { id: 8, title: "Track 4", artist: "Artist 6", duration: "5:10", image: "https://picsum.photos/200/207" },
+    ],
+  };
+
+  // Featured tracks data
+  const featuredTracks = [
+    { id: 1, title: "Track 1", artist: "Artist 1", duration: "3:45", image: "https://picsum.photos/200/209" },
+    { id: 2, title: "Track 2", artist: "Artist 2", duration: "4:20", image: "https://picsum.photos/200/210" },
+    { id: 3, title: "Track 3", artist: "Artist 3", duration: "3:15", image: "https://picsum.photos/200/211" },
+    { id: 4, title: "Track 4", artist: "Artist 4", duration: "5:10", image: "https://picsum.photos/200/212" },
+    { id: 5, title: "Track 5", artist: "Artist 5", duration: "3:55", image: "https://picsum.photos/200/213" },
+  ];
+
+  const handlePlayTrack = (track) => {
+    // TODO: Implement play functionality
+    console.log("Playing track:", track);
   };
 
   useEffect(() => {
@@ -106,6 +127,9 @@ function Search() {
           </div>
         );
 
+      case "track":
+        return <TrackCard track={item} onPlay={handlePlayTrack} />;
+
       default:
         return null;
     }
@@ -153,7 +177,7 @@ function Search() {
 
         {/* Filter Tabs */}
         <div className="flex space-x-4 mt-6">
-          {["all", "albums", "artists", "playlists"].map((tab) => (
+          {["all", "albums", "artists", "playlists", "tracks"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -169,6 +193,22 @@ function Search() {
         </div>
       </div>
 
+      {/* Featured Tracks Section - Only show when no search query */}
+      {!searchQuery && (
+        <div className="max-w-7xl mx-auto mb-8">
+          <h2 className="text-xl font-semibold mb-4">Featured Tracks</h2>
+          <div className="bg-surface-container rounded-xl overflow-hidden">
+            {featuredTracks.map((track) => (
+              <TrackCard
+                key={track.id}
+                track={track}
+                onPlay={handlePlayTrack}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Search Results */}
       <div className="max-w-7xl mx-auto">
         {isLoading ? (
@@ -176,7 +216,7 @@ function Search() {
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className={activeTab === "tracks" ? "" : "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"}>
             {searchResults[activeTab].map((item) => (
               <div key={item.id}>{renderResultCard(item)}</div>
             ))}

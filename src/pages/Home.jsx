@@ -3,11 +3,33 @@ import { useTranslation } from "react-i18next";
 import { PageHeader } from "../components/CustomElements";
 import Loading from "../components/Loading";
 import { Link } from "react-router-dom";
+import TrackCard from "../components/TrackCard";
 
 function Home() {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // Featured artists data
+  const featuredArtists = [
+    { id: 1, name: "Artist 1", image: "https://picsum.photos/200/201" },
+    { id: 2, name: "Artist 2", image: "https://picsum.photos/200/202" },
+    { id: 3, name: "Artist 3", image: "https://picsum.photos/200/203" },
+    { id: 4, name: "Artist 4", image: "https://picsum.photos/200/204" },
+    { id: 5, name: "Artist 5", image: "https://picsum.photos/200/205" },
+    { id: 6, name: "Artist 6", image: "https://picsum.photos/200/206" },
+    { id: 7, name: "Artist 7", image: "https://picsum.photos/200/207" },
+    { id: 8, name: "Artist 8", image: "https://picsum.photos/200/208" },
+  ];
+
+  // Featured tracks data
+  const featuredTracks = [
+    { id: 1, title: "Track 1", artist: "Artist 1", duration: "3:45", image: "https://picsum.photos/200/209" },
+    { id: 2, title: "Track 2", artist: "Artist 2", duration: "4:20", image: "https://picsum.photos/200/210" },
+    { id: 3, title: "Track 3", artist: "Artist 3", duration: "3:15", image: "https://picsum.photos/200/211" },
+    { id: 4, title: "Track 4", artist: "Artist 4", duration: "5:10", image: "https://picsum.photos/200/212" },
+    { id: 5, title: "Track 5", artist: "Artist 5", duration: "3:55", image: "https://picsum.photos/200/213" },
+  ];
 
   // Dummy data for demonstration
   const featuredContent = {
@@ -24,6 +46,11 @@ function Home() {
     { id: 5, title: "Chill Vibes", image: "https://picsum.photos/200/204" },
     { id: 6, title: "Top Hits", image: "https://picsum.photos/200/205" },
   ];
+
+  const handlePlayTrack = (track) => {
+    // TODO: Implement play functionality
+    console.log("Playing track:", track);
+  };
 
   useEffect(() => {
     document.title = "Zia Library - Home";
@@ -43,24 +70,64 @@ function Home() {
         <nav>
           <ul className="space-y-4">
             <li>
-              <Link to="/home" className="text-gray-400 hover:text-white cursor-pointer">
-                Home
-              </Link>
-            </li>
-            <li>
               <Link to="/search" className="text-gray-400 hover:text-white cursor-pointer">
                 Search
               </Link>
             </li>
-            <li className="text-gray-400 hover:text-white cursor-pointer">Albums</li>
-            <li className="text-gray-400 hover:text-white cursor-pointer">Artists</li>
-            <li className="text-gray-400 hover:text-white cursor-pointer">Liked Songs</li>
+            <li>
+              <Link to="/albums" className="text-gray-400 hover:text-white cursor-pointer">
+                Albums
+              </Link>
+            </li>
+            <li>
+              <Link to="/artists" className="text-gray-400 hover:text-white cursor-pointer">
+                Artists
+              </Link>
+            </li>
+            <li>
+              <Link to="/genres" className="text-gray-400 hover:text-white cursor-pointer">
+                Genres
+              </Link>
+            </li>
+
           </ul>
         </nav>
       </div>
 
       {/* Main Content */}
       <div className="ml-64 p-8">
+        {/* Featured Artists Section */}
+        <div className="mb-8">
+          <h2 className="text-xl font-semibold mb-4">Featured Artists</h2>
+          <div className="relative">
+            {/* Scroll Shadow Indicators */}
+            <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-black to-transparent pointer-events-none z-10" />
+            <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-black to-transparent pointer-events-none z-10" />
+            
+            {/* Scrollable Container */}
+            <div className="flex space-x-6 overflow-x-auto pb-4 scrollbar-hide scroll-smooth">
+              {featuredArtists.map((artist) => (
+                <div key={artist.id} className="flex flex-col items-center space-y-2 flex-shrink-0">
+                  <div className="relative group">
+                    <div className="w-20 h-20 rounded-full p-[2px] bg-gradient-to-r from-purple-500 via-pink-500 to-red-500">
+                      <div className="w-full h-full rounded-full overflow-hidden">
+                        <img
+                          src={artist.image}
+                          alt={artist.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    </div>
+                    <div className="absolute inset-0 rounded-full bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300" />
+                  </div>
+                  <span className="text-sm text-gray-400">{artist.name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+
         {/* Featured Section */}
         <div className="mb-8">
           <div className="relative h-80 rounded-lg overflow-hidden">
@@ -102,6 +169,21 @@ function Home() {
             </Link>
           ))}
         </div>
+
+        {/* Featured Tracks Section */}
+        <div className="mb-8 mt-8">
+          <h2 className="text-xl font-semibold mb-4">Featured Tracks</h2>
+          <div className="bg-surface-container rounded-xl overflow-hidden">
+            {featuredTracks.map((track) => (
+              <TrackCard
+                key={track.id}
+                track={track}
+                onPlay={handlePlayTrack}
+              />
+            ))}
+          </div>
+        </div>
+
       </div>
     </div>
   );

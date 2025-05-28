@@ -10,6 +10,10 @@ import ComingSoon from "./components/ComingSoon";
 import Home from "./pages/Home";
 import Album from "./pages/Album";
 import Search from "./pages/Search";
+import Albums from "./pages/Albums";
+import CategoryAlbums from "./pages/CategoryAlbums";
+import Artists from "./pages/Artists";
+import Artist from "./pages/Artist";
 
 function App() {
   return (
@@ -22,8 +26,12 @@ function App() {
         <Route element={<MainLayout />}>
           <Route index element={<Home />} />
           <Route path="/home" element={<Home />} />
+          <Route path="/search" element={<Search />} />
+          <Route path="/albums" element={<Albums />} />
+          <Route path="/albums/category/:categoryId" element={<CategoryAlbums />} />
           <Route path="/album/:id" element={<Album />} />
-          <Route path="search" element={<Search />} />
+          <Route path="artists" element={<Artists />} />
+          <Route path="artist/:id" element={<Artist />} />
 
           {/* The 404 dimension */}
           <Route path="*" element={<ComingSoon />} />
