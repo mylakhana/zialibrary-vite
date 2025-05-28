@@ -14,6 +14,8 @@ import Albums from "./pages/Albums";
 import CategoryAlbums from "./pages/CategoryAlbums";
 import Artists from "./pages/Artists";
 import Artist from "./pages/Artist";
+import Genres from "./pages/Genres";
+import Genre from "./pages/Genre";
 
 function App() {
   return (
@@ -32,6 +34,8 @@ function App() {
           <Route path="/album/:id" element={<Album />} />
           <Route path="artists" element={<Artists />} />
           <Route path="artist/:id" element={<Artist />} />
+          <Route path="genres" element={<Genres />} />
+          <Route path="genre/:id" element={<Genre />} />
 
           {/* The 404 dimension */}
           <Route path="*" element={<ComingSoon />} />

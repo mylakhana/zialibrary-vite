@@ -2,13 +2,15 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PageHeader } from "../components/CustomElements";
 import Loading from "../components/Loading";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import TrackCard from "../components/TrackCard";
+import ThemeSwitch from "../components/ThemeSwitch";
 
 function Home() {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   // Featured artists data
   const featuredArtists = [
@@ -52,6 +54,10 @@ function Home() {
     console.log("Playing track:", track);
   };
 
+  const handleArtistClick = (artist) => {
+    navigate(`/artist/${artist.id}`);
+  };
+
   useEffect(() => {
     document.title = "Zia Library - Home";
   }, []);
@@ -61,55 +67,63 @@ function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-white dark:bg-black">
       {/* Sidebar */}
-      <div className="fixed left-0 top-0 h-full w-64 bg-gray-900 p-6">
+      <div className="fixed left-0 top-0 h-full w-64 bg-surface-container p-6">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-green-500">Zia Library</h1>
+          <h1 className="text-2xl font-bold text-primary">Zia Library</h1>
         </div>
         <nav>
           <ul className="space-y-4">
             <li>
-              <Link to="/search" className="text-gray-400 hover:text-white cursor-pointer">
+              <Link to="/search" className="text-on-surface-variant hover:text-on-surface cursor-pointer">
                 Search
               </Link>
             </li>
             <li>
-              <Link to="/albums" className="text-gray-400 hover:text-white cursor-pointer">
+              <Link to="/albums" className="text-on-surface-variant hover:text-on-surface cursor-pointer">
                 Albums
               </Link>
             </li>
             <li>
-              <Link to="/artists" className="text-gray-400 hover:text-white cursor-pointer">
+              <Link to="/artists" className="text-on-surface-variant hover:text-on-surface cursor-pointer">
                 Artists
               </Link>
             </li>
             <li>
-              <Link to="/genres" className="text-gray-400 hover:text-white cursor-pointer">
+              <Link to="/genres" className="text-on-surface-variant hover:text-on-surface cursor-pointer">
                 Genres
               </Link>
             </li>
-
           </ul>
         </nav>
+
+        {/* Theme Switch */}
+        <div className="absolute bottom-8 left-6 mb-20">
+          <ThemeSwitch />
+        </div>
       </div>
 
       {/* Main Content */}
       <div className="ml-64 p-8">
         {/* Featured Artists Section */}
         <div className="mb-8">
-          <h2 className="text-xl font-semibold mb-4">Featured Artists</h2>
+          <h2 className="text-xl font-semibold mb-4 text-on-surface">Featured Artists</h2>
           <div className="relative">
             {/* Scroll Shadow Indicators */}
-            <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-black to-transparent pointer-events-none z-10" />
-            <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-black to-transparent pointer-events-none z-10" />
+            <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-surface to-transparent pointer-events-none z-10" />
+            <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-surface to-transparent pointer-events-none z-10" />
             
             {/* Scrollable Container */}
             <div className="flex space-x-6 overflow-x-auto pb-4 scrollbar-hide scroll-smooth">
               {featuredArtists.map((artist) => (
-                <div key={artist.id} className="flex flex-col items-center space-y-2 flex-shrink-0">
+                <div
+                  key={artist.id}
+                  onClick={() => handleArtistClick(artist)}
+                  className="flex flex-col items-center space-y-2 flex-shrink-0 cursor-pointer group"
+                >
                   <div className="relative group">
-                    <div className="w-20 h-20 rounded-full p-[2px] bg-gradient-to-r from-purple-500 via-pink-500 to-red-500">
+                    <div className="w-20 h-20 rounded-full p-[2px] bg-gradient-to-r from-primary via-primary-variant to-primary">
                       <div className="w-full h-full rounded-full overflow-hidden">
                         <img
                           src={artist.image}
@@ -118,15 +132,14 @@ function Home() {
                         />
                       </div>
                     </div>
-                    <div className="absolute inset-0 rounded-full bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300" />
+                    <div className="absolute inset-0 rounded-full bg-surface bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300" />
                   </div>
-                  <span className="text-sm text-gray-400">{artist.name}</span>
+                  <span className="text-sm text-on-surface-variant">{artist.name}</span>
                 </div>
               ))}
             </div>
           </div>
         </div>
-
 
         {/* Featured Section */}
         <div className="mb-8">
@@ -136,9 +149,9 @@ function Home() {
               alt={featuredContent.title}
               className="w-full h-full object-cover"
             />
-            <div className="absolute bottom-0 left-0 p-6 bg-gradient-to-t from-black to-transparent w-full">
-              <h2 className="text-4xl font-bold mb-2">{featuredContent.title}</h2>
-              <p className="text-gray-300">{featuredContent.description}</p>
+            <div className="absolute bottom-0 left-0 p-6 bg-gradient-to-t from-white dark:from-black to-transparent w-full">
+              <h2 className="text-4xl font-bold mb-2 text-white">{featuredContent.title}</h2>
+              <p className="text-gray-600 dark:text-gray-300">{featuredContent.description}</p>
             </div>
           </div>
         </div>
@@ -149,7 +162,7 @@ function Home() {
             <Link
               key={item.id}
               to={`/album/${item.id}`}
-              className="bg-gray-800 p-4 rounded-lg hover:bg-gray-700 transition-all duration-300 hover:scale-105 hover:shadow-xl"
+              className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg hover:bg-surface-container-high transition-all duration-300 hover:scale-105 hover:shadow-xl"
             >
               <div className="aspect-square mb-4 relative group">
                 <img
@@ -157,22 +170,22 @@ function Home() {
                   alt={item.title}
                   className="w-full h-full object-cover rounded-md"
                 />
-                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
-                  <button className="bg-primary text-white rounded-full p-3 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                <div className="absolute inset-0 bg-surface bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
+                  <button className="bg-primary text-on-primary rounded-full p-3 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
                     <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M8 5v14l11-7z" />
                     </svg>
                   </button>
                 </div>
               </div>
-              <h3 className="font-semibold">{item.title}</h3>
+              <h3 className="font-semibold text-on-surface">{item.title}</h3>
             </Link>
           ))}
         </div>
 
         {/* Featured Tracks Section */}
         <div className="mb-8 mt-8">
-          <h2 className="text-xl font-semibold mb-4">Featured Tracks</h2>
+          <h2 className="text-xl font-semibold mb-4 text-on-surface">Featured Tracks</h2>
           <div className="bg-surface-container rounded-xl overflow-hidden">
             {featuredTracks.map((track) => (
               <TrackCard
@@ -183,7 +196,6 @@ function Home() {
             ))}
           </div>
         </div>
-
       </div>
     </div>
   );
