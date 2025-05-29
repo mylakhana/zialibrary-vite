@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { PageHeader } from "../components/CustomElements";
+import { useDispatch } from "react-redux";
+import { PageHeader, fixUrl } from "../components/CustomElements";
 import Loading from "../components/Loading";
 import { Link, useNavigate } from "react-router-dom";
 import TrackCard from "../components/TrackCard";
 import ThemeSwitch from "../components/ThemeSwitch";
 import { handleGetHomeData } from "../services/api_helper";
+import { setCurrentTrack, setQueue } from "../store/slices/playerSlice";
 
 function Home() {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -20,15 +23,24 @@ function Home() {
     featured_tracks: [],
   });
 
-  const getImageUrl = (path) => {
-    if (!path) return "/placeholder/artist.jpg";
-    const s3BucketUrl = import.meta.env.VITE_S3_BUCKET_URL;
-    return `${s3BucketUrl}${path}`;
-  };
-
   const handlePlayTrack = (track) => {
-    // TODO: Implement play functionality
-    console.log("Playing track:", track);
+    dispatch(setCurrentTrack({
+      id: track.id,
+      title: track.title,
+      artist: track.artist,
+      cover: fixUrl(track.cover),
+      audio_url: fixUrl(track.url),
+    }));
+
+    // Set the queue with all tracks from the current section
+    const queue = homeData.featured_tracks.map(track => ({
+      id: track.id,
+      title: track.title,
+      artist: track.artist,
+      cover: fixUrl(track.cover),
+      audio_url: fixUrl(track.url),
+    }));
+    dispatch(setQueue(queue));
   };
 
   const handleArtistClick = (artist) => {
@@ -39,7 +51,6 @@ function Home() {
     document.title = "Zia Library - Home";
     handleGetHomeData(
       (res) => {
-        console.log(res);
         setHomeData(res.data);
         setIsLoading(false);
       },
@@ -137,9 +148,7 @@ function Home() {
                     <div className="w-20 h-20 rounded-full p-[2px] bg-gradient-to-r from-primary via-primary-variant to-primary">
                       <div className="w-full h-full rounded-full overflow-hidden">
                         <img
-                          src={
-                            getImageUrl(artist.cover) || "/default-artist.png"
-                          }
+                          src={fixUrl(artist.cover) || "/default-artist.png"}
                           alt={artist.title}
                           className="w-full h-full object-cover"
                         />
@@ -161,7 +170,7 @@ function Home() {
           {homeData.featured_playlist && (
             <div className="relative h-80 rounded-lg overflow-hidden">
               <img
-                src={getImageUrl(homeData.featured_playlist.album_art)}
+                src={fixUrl(homeData.featured_playlist.album_art)}
                 alt={homeData.featured_playlist.title}
                 className="w-full h-full object-cover"
               />
@@ -188,7 +197,7 @@ function Home() {
               >
                 <div className="aspect-square mb-4 relative group">
                   <img
-                    src={getImageUrl(album.album_art) || "/default-album.png"}
+                    src={fixUrl(album.album_art) || "/default-album.png"}
                     alt={album.title}
                     className="w-full h-full object-cover rounded-md"
                   />

@@ -1,3 +1,9 @@
+export const fixUrl = (path) => {
+  if (!path) return "/placeholder/artist.jpg";
+  const s3BucketUrl = import.meta.env.VITE_S3_BUCKET_URL;
+  return `${s3BucketUrl}${path}`;
+};
+
 export const PageHeader = ({
   prefix,
   title,

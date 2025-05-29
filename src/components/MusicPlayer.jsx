@@ -1,23 +1,31 @@
-import { useState, useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import ExpandedPlayer from "./ExpandedPlayer";
+import {
+  setCurrentTrack,
+  togglePlay,
+  setQueue,
+  setVolume,
+  setPlaybackSpeed,
+  setCurrentTime,
+  setDuration,
+} from "../store/slices/playerSlice";
 
-function MusicPlayer() {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
+export default function MusicPlayer() {
+  const dispatch = useDispatch();
+  const {
+    currentTrack,
+    isPlaying,
+    queue,
+    volume,
+    playbackSpeed,
+    currentTime,
+    duration,
+  } = useSelector((state) => state.player);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [volume, setVolume] = useState(0.5);
-  const [playbackSpeed, setPlaybackSpeed] = useState(1);
-  const audioRef = useRef(new Audio("https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"));
+  const audioRef = useRef(new Audio());
 
   const speeds = [1, 1.5, 2, 3];
-
-  // Dummy data for the current track
-  const currentTrack = {
-    title: "Sample Track",
-    artist: "Sample Artist",
-    cover: "https://picsum.photos/100/100",
-  };
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -27,16 +35,22 @@ function MusicPlayer() {
 
     // Event listeners
     const handleTimeUpdate = () => {
-      setCurrentTime(audio.currentTime);
+      dispatch(setCurrentTime(audio.currentTime));
     };
 
     const handleLoadedMetadata = () => {
-      setDuration(audio.duration);
+      dispatch(setDuration(audio.duration));
     };
 
     const handleEnded = () => {
-      setIsPlaying(false);
-      setCurrentTime(0);
+      // Play next track when current track ends
+      const currentIndex = queue.findIndex(track => track.id === currentTrack.id);
+      if (currentIndex < queue.length - 1) {
+        dispatch(setCurrentTrack(queue[currentIndex + 1]));
+      } else {
+        dispatch(togglePlay());
+        dispatch(setCurrentTime(0));
+      }
     };
 
     audio.addEventListener('timeupdate', handleTimeUpdate);
@@ -48,7 +62,24 @@ function MusicPlayer() {
       audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
       audio.removeEventListener('ended', handleEnded);
     };
-  }, []);
+  }, [dispatch, queue, currentTrack]);
+
+  useEffect(() => {
+    if (currentTrack) {
+      audioRef.current.src = currentTrack.audio_url;
+      if (isPlaying) {
+        audioRef.current.play();
+      }
+    }
+  }, [currentTrack, isPlaying]);
+
+  useEffect(() => {
+    audioRef.current.volume = volume;
+  }, [volume]);
+
+  useEffect(() => {
+    audioRef.current.playbackRate = playbackSpeed;
+  }, [playbackSpeed]);
 
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
@@ -57,43 +88,51 @@ function MusicPlayer() {
   };
 
   const handlePlayPause = () => {
-    if (isPlaying) {
-      audioRef.current.pause();
-    } else {
-      audioRef.current.play();
-    }
-    setIsPlaying(!isPlaying);
+    dispatch(togglePlay());
   };
 
   const handleProgressChange = (e) => {
     const newTime = (e.target.value / 100) * duration;
     audioRef.current.currentTime = newTime;
-    setCurrentTime(newTime);
+    dispatch(setCurrentTime(newTime));
   };
 
   const handleVolumeChange = (e) => {
     const newVolume = e.target.value / 100;
-    audioRef.current.volume = newVolume;
-    setVolume(newVolume);
+    dispatch(setVolume(newVolume));
   };
 
   const handlePrevious = () => {
-    audioRef.current.currentTime = 0;
-    setCurrentTime(0);
+    if (currentTime > 3) {
+      // If we're more than 3 seconds into the track, restart it
+      audioRef.current.currentTime = 0;
+      dispatch(setCurrentTime(0));
+    } else {
+      // Otherwise, go to previous track
+      const currentIndex = queue.findIndex(track => track.id === currentTrack.id);
+      if (currentIndex > 0) {
+        dispatch(setCurrentTrack(queue[currentIndex - 1]));
+      }
+    }
   };
 
   const handleNext = () => {
-    audioRef.current.currentTime = duration;
-    setCurrentTime(duration);
+    const currentIndex = queue.findIndex(track => track.id === currentTrack.id);
+    if (currentIndex < queue.length - 1) {
+      dispatch(setCurrentTrack(queue[currentIndex + 1]));
+    }
   };
 
   const handleSpeedChange = () => {
     const currentIndex = speeds.indexOf(playbackSpeed);
     const nextIndex = (currentIndex + 1) % speeds.length;
     const nextSpeed = speeds[nextIndex];
-    audioRef.current.playbackRate = nextSpeed;
-    setPlaybackSpeed(nextSpeed);
+    dispatch(setPlaybackSpeed(nextSpeed));
   };
+
+  if (!currentTrack) {
+    return null;
+  }
 
   return (
     <>
@@ -118,11 +157,6 @@ function MusicPlayer() {
               <button onClick={handlePrevious} className="text-gray-400 hover:text-white">
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
-                </svg>
-              </button>
-              <button onClick={handlePrevious} className="text-gray-400 hover:text-white">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M6 4l12 8-12 8z" />
                 </svg>
               </button>
               <button
@@ -158,7 +192,7 @@ function MusicPlayer() {
                 type="range"
                 min="0"
                 max="100"
-                value={(currentTime / duration) * 100}
+                value={isNaN(duration) ? 0 : (currentTime / duration) * 100}
                 onChange={handleProgressChange}
                 className="w-full h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer"
               />
@@ -197,7 +231,7 @@ function MusicPlayer() {
               className="text-gray-400 hover:text-white p-2"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
               </svg>
             </button>
           </div>
@@ -214,5 +248,3 @@ function MusicPlayer() {
     </>
   );
 }
-
-export default MusicPlayer; 

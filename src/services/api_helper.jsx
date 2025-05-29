@@ -21,3 +21,25 @@ export const handleGetHomeData = async (
     setIsLoading(false);
   }
 };
+
+export const handleGetTrackArts = async (
+  data,
+  onSuccess,
+  onError,
+  setIsLoading = () => {}
+) => {
+  try {
+    setIsLoading(true);
+    const res = await api.getTrackArts(data);
+    if (res.success) {
+      onSuccess(res);
+      return;
+    }
+
+    onError(res);
+  } catch (error) {
+    onError(error);
+  } finally {
+    setIsLoading(false);
+  }
+};
