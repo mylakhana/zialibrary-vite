@@ -3,13 +3,13 @@ import { useSelector } from "react-redux";
 
 function Genres() {
   const navigate = useNavigate();
-  const { genres, isLoading, error } = useSelector((state) => state.genre);
+  const { genres } = useSelector((state) => state.data);
 
   const handleGenreClick = (genre) => {
     navigate(`/genre/${genre.id}`);
   };
 
-  if (isLoading) {
+  if (genres.loading) {
     return (
       <div className="min-h-screen bg-surface flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
@@ -17,12 +17,12 @@ function Genres() {
     );
   }
 
-  if (error) {
+  if (genres.error) {
     return (
       <div className="min-h-screen bg-surface flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-error mb-2">Error Loading Genres</h2>
-          <p className="text-on-surface-variant">{error}</p>
+          <p className="text-on-surface-variant">{genres.error}</p>
         </div>
       </div>
     );
@@ -48,7 +48,7 @@ function Genres() {
       {/* Genres Grid */}
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {genres.map((genre) => (
+          {genres.data.map((genre) => (
             <div
               key={genre.id}
               onClick={() => handleGenreClick(genre)}

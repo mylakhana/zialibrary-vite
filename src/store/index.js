@@ -5,7 +5,7 @@ import profileReducer from "./slices/profileSlice";
 import themeReducer from "./slices/themeSlice";
 import toastReducer from "./slices/toastSlice";
 import playerReducer from "./slices/playerSlice";
-import genreReducer from "./slices/genreSlice";
+import dataReducer from "./slices/dataSlice";
 
 export const store = configureStore({
   reducer: {
@@ -15,6 +15,6 @@ export const store = configureStore({
     toast: toastReducer,
     preferences: preferencesReducer,
     player: playerReducer,
-    genre: genreReducer,
+    data: dataReducer,
   },
 });

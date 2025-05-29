@@ -64,3 +64,65 @@ export const handleGetGenre = async (
     setIsLoading(false);
   }
 };
+
+export const handleGetArtistGenres = async (
+  id,
+  onSuccess,
+  onError,
+  setIsLoading = () => {}
+) => {
+  try {
+    setIsLoading(true);
+    const res = await api.getArtistGenres(id);
+    if (res.success) {
+      onSuccess(res);
+      return;
+    }
+    onError(res);
+  } catch (error) {
+    onError(error);
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+export const handleGetArtistTracks = async (
+  data,
+  onSuccess,
+  onError,
+  setIsLoading = () => {}
+) => {
+  try {
+    setIsLoading(true);
+    const res = await api.getArtistTracks(data);
+    if (res.success) {
+      onSuccess(res);
+      return;
+    }
+    onError(res);
+  } catch (error) {
+    onError(error);
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+export const handleGetArtists = async (
+  onSuccess,
+  onError,
+  setIsLoading = () => {}
+) => {
+  try {
+    setIsLoading(true);
+    const res = await api.getArtists();
+    if (res.success) {
+      onSuccess(res);
+      return;
+    }
+    onError(res);
+  } catch (error) {
+    onError(error);
+  } finally {
+    setIsLoading(false);
+  }
+};

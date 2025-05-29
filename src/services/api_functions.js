@@ -11,6 +11,18 @@ export const getGenre = async () => {
   return get("/fetch-v2/genre");
 };
 
+export const getArtistGenres = async (id) => {
+  return post("/fetch-v2/genre-of-artist", { id });
+};
+
+export const getArtistTracks = async (data) => {
+  return post("/fetch-v2/tracks-of-artist", data);
+};
+
+export const getArtists = async () => {
+  return get("/fetch-v2/artists");
+};
+
 // Add more API functions here as needed
 // For example:
 // - Order functions
