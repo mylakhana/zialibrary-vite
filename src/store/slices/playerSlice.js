@@ -8,6 +8,7 @@ const initialState = {
   playbackSpeed: 1,
   currentTime: 0,
   duration: 0,
+  trackArts: {},
 };
 
 export const playerSlice = createSlice({
@@ -43,6 +44,9 @@ export const playerSlice = createSlice({
     setDuration: (state, action) => {
       state.duration = action.payload;
     },
+    setTrackArts: (state, action) => {
+      state.trackArts = { ...state.trackArts, ...action.payload };
+    },
   },
 });
 
@@ -56,6 +60,7 @@ export const {
   setPlaybackSpeed,
   setCurrentTime,
   setDuration,
+  setTrackArts,
 } = playerSlice.actions;
 
 export default playerSlice.reducer; 

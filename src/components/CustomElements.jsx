@@ -1,5 +1,11 @@
 export const fixUrl = (path) => {
   if (!path) return "/placeholder/artist.jpg";
+
+  //if path is a url, return it
+  if (path.includes("http")) {
+    return path;
+  }
+
   const s3BucketUrl = import.meta.env.VITE_S3_BUCKET_URL;
   return `${s3BucketUrl}${path}`;
 };

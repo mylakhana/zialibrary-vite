@@ -5,6 +5,7 @@ import TrackCard from "../components/TrackCard";
 import {
   handleGetArtistGenres,
   handleGetArtistTracks,
+  handleGetTrackArts,
 } from "../services/api_helper";
 import { setCurrentTrack, setQueue } from "../store/slices/playerSlice";
 import { fixUrl } from "../components/CustomElements";
@@ -64,6 +65,25 @@ function Artist() {
       },
       (res) => {
         setTracks(res.data);
+        // Fetch track arts in bulk
+        const trackIds = res.data.map(track => track.id);
+        handleGetTrackArts(
+          { ids: `[${trackIds.join(',')}]` },
+          (artRes) => {
+            if (artRes.success && artRes.data) {
+              // Update tracks with their arts
+              setTracks(prevTracks => 
+                prevTracks.map(track => ({
+                  ...track,
+                  cover: artRes.data[track.id] ? fixUrl(artRes.data[track.id]) : track.cover
+                }))
+              );
+            }
+          },
+          (error) => {
+            console.error("Error fetching track arts:", error);
+          }
+        );
       },
       (error) => {
         console.error("Error fetching artist tracks:", error);
@@ -86,6 +106,25 @@ function Artist() {
       },
       (res) => {
         setTracks(res.data);
+        // Fetch track arts in bulk for new tracks
+        const trackIds = res.data.map(track => track.id);
+        handleGetTrackArts(
+          { ids: `[${trackIds.join(',')}]` },
+          (artRes) => {
+            if (artRes.success && artRes.data) {
+              // Update tracks with their arts
+              setTracks(prevTracks => 
+                prevTracks.map(track => ({
+                  ...track,
+                  cover: artRes.data[track.id] ? fixUrl(artRes.data[track.id]) : fixUrl(track.cover)
+                }))
+              );
+            }
+          },
+          (error) => {
+            console.error("Error fetching track arts:", error);
+          }
+        );
       },
       (error) => {
         console.error("Error fetching tracks:", error);
@@ -95,12 +134,11 @@ function Artist() {
   };
 
   const handlePlayTrack = (track) => {
-    console.log(track);
     dispatch(setCurrentTrack({
       id: track.id,
       title: track.title,
       artist: track.artist,
-      cover: fixUrl(track.cover),
+      cover: track.cover,
       audio_url: fixUrl(track.url),
     }));
 
@@ -109,7 +147,7 @@ function Artist() {
       id: track.id,
       title: track.title,
       artist: track.artist,
-      cover: fixUrl(track.cover),
+      cover: track.cover,
       audio_url: fixUrl(track.url),
     }));
     dispatch(setQueue(queue));

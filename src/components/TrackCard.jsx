@@ -14,34 +14,11 @@ import { handleGetTrackArts } from "../services/api_helper";
 export default function TrackCard({ track, onPlay }) {
   const [isHovered, setIsHovered] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-  const [trackArt, setTrackArt] = useState(null);
   const dispatch = useDispatch();
   const currentTrack = useSelector((state) => state.player.currentTrack);
   const queue = useSelector((state) => state.player.queue);
   const isPlaying = currentTrack?.id === track.id;
   const isInQueue = queue.some((queueTrack) => queueTrack.id === track.id);
-
-  useEffect(() => {
-    const fetchTrackArt = async () => {
-      try {
-        await handleGetTrackArts(
-          { ids: `[${track.id}]` },
-          (res) => {
-            if (res.success && res.data && res.data[track.id]) {
-              setTrackArt(fixUrl(res.data[track.id]));
-            }
-          },
-          (error) => {
-            console.error("Error fetching track art:", error);
-          }
-        );
-      } catch (error) {
-        console.error("Error in track art fetch:", error);
-      }
-    };
-
-    fetchTrackArt();
-  }, [track.id]);
 
   const formatDuration = (seconds) => {
     if (!seconds) return "0:00";
@@ -67,13 +44,15 @@ export default function TrackCard({ track, onPlay }) {
     if (isInQueue) {
       dispatch(removeFromQueue(track.id));
     } else {
-      dispatch(addToQueue({
-        id: track.id,
-        title: track.title,
-        artist: track.artist,
-        cover: fixUrl(track.cover),
-        audio_url: fixUrl(track.url),
-      }));
+      dispatch(
+        addToQueue({
+          id: track.id,
+          title: track.title,
+          artist: track.artist,
+          cover: track.cover,
+          audio_url: fixUrl(track.url),
+        })
+      );
     }
     setShowMenu(false);
   };
@@ -86,17 +65,17 @@ export default function TrackCard({ track, onPlay }) {
 
   return (
     <div
-      className={`flex items-center gap-4 p-4 hover:bg-surface-container-high transition-colors group relative ${
-        isPlaying ? "bg-primary/5" : ""
-      }`}
+      className={`flex items-center gap-4 p-4 transition-colors group relative hover:bg-gray-200 dark:hover:bg-gray-800/20
+        
+        e ${isPlaying ? "bg-primary/5" : ""}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Track Image */}
       <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-primary/5">
-        {trackArt ? (
+        {track.cover ? (
           <img
-            src={trackArt}
+            src={track.cover}
             alt={track.title}
             className="w-full h-full object-cover"
           />
@@ -135,10 +114,17 @@ export default function TrackCard({ track, onPlay }) {
         <button
           onClick={handlePlay}
           className={`p-2 rounded-full ${
-            isPlaying ? "bg-primary text-on-primary" : "bg-primary/10 text-primary"
+            isPlaying
+              ? "bg-primary text-on-primary"
+              : "bg-primary/10 text-primary"
           } transition-all duration-200`}
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -179,15 +165,19 @@ export default function TrackCard({ track, onPlay }) {
           </Button>
         </DropdownTrigger>
         <DropdownMenu aria-label="Static Actions">
-          <DropdownItem onPress={handlePlay} key="play">Play</DropdownItem>
-          <DropdownItem 
-            onPress={handleQueueAction} 
+          <DropdownItem onPress={handlePlay} key="play">
+            Play
+          </DropdownItem>
+          <DropdownItem
+            onPress={handleQueueAction}
             key="queue"
             className={isInQueue ? "text-danger" : ""}
           >
             {isInQueue ? "Remove from Queue" : "Add to Queue"}
           </DropdownItem>
-          <DropdownItem onPress={handleDownload} key="download">Download MP3</DropdownItem>
+          <DropdownItem onPress={handleDownload} key="download">
+            Download MP3
+          </DropdownItem>
         </DropdownMenu>
       </Dropdown>
     </div>

@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { PageHeader, fixUrl } from "../components/CustomElements";
-import Loading from "../components/Loading";
 import { Link, useNavigate } from "react-router-dom";
+import { fixUrl } from "../components/CustomElements";
+import Loading from "../components/Loading";
 import TrackCard from "../components/TrackCard";
-import ThemeSwitch from "../components/ThemeSwitch";
 import { handleGetHomeData } from "../services/api_helper";
 import { setCurrentTrack, setQueue } from "../store/slices/playerSlice";
 
@@ -24,16 +23,18 @@ function Home() {
   });
 
   const handlePlayTrack = (track) => {
-    dispatch(setCurrentTrack({
-      id: track.id,
-      title: track.title,
-      artist: track.artist,
-      cover: fixUrl(track.cover),
-      audio_url: fixUrl(track.url),
-    }));
+    dispatch(
+      setCurrentTrack({
+        id: track.id,
+        title: track.title,
+        artist: track.artist,
+        cover: fixUrl(track.cover),
+        audio_url: fixUrl(track.url),
+      })
+    );
 
     // Set the queue with all tracks from the current section
-    const queue = homeData.featured_tracks.map(track => ({
+    const queue = homeData.featured_tracks.map((track) => ({
       id: track.id,
       title: track.title,
       artist: track.artist,
@@ -71,8 +72,7 @@ function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-black">
-      {/* Sidebar */}
+    <div className="min-h-screen bg-surface">
       <div className="fixed left-0 top-0 h-full w-64 bg-surface-container p-6">
         <div className="mb-8">
           <img
@@ -117,11 +117,6 @@ function Home() {
             </li>
           </ul>
         </nav>
-
-        {/* Theme Switch */}
-        <div className="absolute bottom-8 left-6 mb-20">
-          <ThemeSwitch />
-        </div>
       </div>
 
       {/* Main Content */}
@@ -142,7 +137,7 @@ function Home() {
                 <div
                   key={artist.id}
                   onClick={() => handleArtistClick(artist)}
-                  className="flex flex-col items-center space-y-2 flex-shrink-0 cursor-pointer group"
+                  className="flex flex-col items-center space-y-2 flex-shrink-0 cursor-pointer group w-24"
                 >
                   <div className="relative group">
                     <div className="w-20 h-20 rounded-full p-[2px] bg-gradient-to-r from-primary via-primary-variant to-primary">
@@ -156,7 +151,7 @@ function Home() {
                     </div>
                     <div className="absolute inset-0 rounded-full bg-surface bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300" />
                   </div>
-                  <span className="text-sm text-on-surface-variant">
+                  <span className="text-sm text-on-surface-variant text-center line-clamp-3 w-full">
                     {artist.short_title || artist.title}
                   </span>
                 </div>
