@@ -10,6 +10,8 @@ import ThemeSwitch from "./ThemeSwitch";
 
 function Sidebar() {
   const { t } = useTranslation();
+  //get from local storage
+  const darkMode = localStorage.getItem("theme") === "dark";
 
   const [isCollapsed, setIsCollapsed] = useState(() => {
     const savedState = localStorage.getItem("sidebarCollapsed");
@@ -63,8 +65,8 @@ function Sidebar() {
           {/* Sidebar Header */}
           <div className="flex items-center mb-6 mt-4 gap-4">
             <img
-              src="/logo_circle.svg"
-              alt="ShipTag Logo"
+              src={darkMode ? "/logo_wh.png" : "/logo_bk.png"}
+              alt="Zia Library Logo"
               className="h-12 w-12"
             />
             {!isCollapsed && (

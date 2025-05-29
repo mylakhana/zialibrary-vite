@@ -8,11 +8,10 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        // target: 'https://api2.shiptag.com',
-        target: 'https://api.shiptag.test',
+        target: 'https://api.ziaemadinah.test',
         changeOrigin: true,
         secure: false,
-        rewrite: (path) => path.replace(/^\/api/, '/gateway')
+        rewrite: (path) => path.replace(/^\/api/, '/')
       }
     }
   }

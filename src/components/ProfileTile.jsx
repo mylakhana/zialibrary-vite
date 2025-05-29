@@ -9,7 +9,6 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import avatar from "../assets/menu_icons/avatar.png";
-import { handleLogout } from "../services/api_helper";
 import { changeLanguage } from "../store/slices/languageSlice";
 import { updateToastConfig } from "../store/slices/toastSlice";
 
@@ -70,9 +69,6 @@ function ProfileTile({
       <DropdownMenu aria-label="Profile Actions" variant="faded">
         <DropdownItem key="new" onPress={handleLanguageToggle}>
           {currentLanguage == "ar" ? "English" : "العربية"}
-        </DropdownItem>
-        <DropdownItem key="copy" onPress={() => handleLogout(navigate)}>
-          {t("common.logout")}
         </DropdownItem>
       </DropdownMenu>
     </Dropdown>
