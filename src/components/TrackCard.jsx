@@ -5,19 +5,43 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from "@heroui/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { addToQueue, removeFromQueue } from "../store/slices/playerSlice";
 import { fixUrl } from "./CustomElements";
+import { handleGetTrackArts } from "../services/api_helper";
 
 export default function TrackCard({ track, onPlay }) {
   const [isHovered, setIsHovered] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const [trackArt, setTrackArt] = useState(null);
   const dispatch = useDispatch();
   const currentTrack = useSelector((state) => state.player.currentTrack);
   const queue = useSelector((state) => state.player.queue);
   const isPlaying = currentTrack?.id === track.id;
   const isInQueue = queue.some((queueTrack) => queueTrack.id === track.id);
+
+  useEffect(() => {
+    const fetchTrackArt = async () => {
+      try {
+        await handleGetTrackArts(
+          { ids: `[${track.id}]` },
+          (res) => {
+            if (res.success && res.data && res.data[track.id]) {
+              setTrackArt(fixUrl(res.data[track.id]));
+            }
+          },
+          (error) => {
+            console.error("Error fetching track art:", error);
+          }
+        );
+      } catch (error) {
+        console.error("Error in track art fetch:", error);
+      }
+    };
+
+    fetchTrackArt();
+  }, [track.id]);
 
   const formatDuration = (seconds) => {
     if (!seconds) return "0:00";
@@ -70,22 +94,32 @@ export default function TrackCard({ track, onPlay }) {
     >
       {/* Track Image */}
       <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-primary/5">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-primary/5" />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <svg
-            className="w-6 h-6 text-primary/20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1.5}
-              d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"
-            />
-          </svg>
-        </div>
+        {trackArt ? (
+          <img
+            src={trackArt}
+            alt={track.title}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <>
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-primary/5" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <svg
+                className="w-6 h-6 text-primary/20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"
+                />
+              </svg>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Track Info */}

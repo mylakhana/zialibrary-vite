@@ -5,7 +5,10 @@ export const getHomeData = async () => {
 };
 
 export const getTrackArts = async (data) => {
-  return get("/fetch-v2/track-arts", data);
+  return post("/fetch-v2/track-arts", data);
+};
+export const getGenre = async () => {
+  return get("/fetch-v2/genre");
 };
 
 // Add more API functions here as needed

@@ -168,7 +168,10 @@ function Home() {
         {/* Featured Albums Section */}
         <div className="mb-8">
           {homeData.featured_playlist && (
-            <div className="relative h-80 rounded-lg overflow-hidden">
+            <Link
+              to={`/album/${homeData.featured_playlist.id}`}
+              className="block relative h-80 rounded-lg overflow-hidden hover:opacity-95 transition-opacity"
+            >
               <img
                 src={fixUrl(homeData.featured_playlist.album_art)}
                 alt={homeData.featured_playlist.title}
@@ -182,7 +185,7 @@ function Home() {
                   {homeData.featured_playlist.description}
                 </p>
               </div>
-            </div>
+            </Link>
           )}
 
           <h2 className="text-xl font-semibold mb-4 text-on-surface">
