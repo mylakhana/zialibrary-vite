@@ -93,10 +93,10 @@ function Home() {
             </li>
             <li>
               <Link
-                to="/albums"
+                to="/playlists"
                 className="text-on-surface-variant hover:text-on-surface cursor-pointer"
               >
-                Albums
+                Playlists
               </Link>
             </li>
             <li>

@@ -126,3 +126,107 @@ export const handleGetArtists = async (
     setIsLoading(false);
   }
 };
+
+export const handleGetAlbumGroups = async (
+  onSuccess,
+  onError,
+  setIsLoading = () => {}
+) => {
+  try {
+    setIsLoading(true);
+    const res = await api.getAlbumGroups();
+    if (res.success) {
+      onSuccess(res);
+      return;
+    }
+    onError(res);
+  } catch (error) {
+    onError(error);
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+export const handleGetPlaylist = async (
+  data,
+  onSuccess,
+  onError,
+  setIsLoading = () => {}
+) => {
+  try {
+    setIsLoading(true);
+    const res = await api.getPlaylist(data);
+    if (res.success) {
+      onSuccess(res);
+      return;
+    }
+    onError(res);
+  } catch (error) {
+    onError(error);
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+export const handleGetAlbumDetails = async (
+  data,
+  onSuccess,
+  onError,
+  setIsLoading = () => {}
+) => {
+  try {
+    setIsLoading(true);
+    const res = await api.getAlbumDetails(data);
+    if (res.success) {
+      onSuccess(res);
+      return;
+    }
+    onError(res);
+  } catch (error) {
+    onError(error);
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+export const handleGetSubAlbums = async (
+  data,
+  onSuccess,
+  onError,
+  setIsLoading = () => {}
+) => {
+  try {
+    setIsLoading(true);
+    const res = await api.getSubAlbums(data);
+    if (res.success) {
+      onSuccess(res);
+      return;
+    }
+    onError(res);
+  } catch (error) {
+    onError(error);
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+export const handleGetAlbumTracks = async (
+  data,
+  onSuccess,
+  onError,
+  setIsLoading = () => {}
+) => {
+  try {
+    setIsLoading(true);
+    const res = await api.getAlbumTracks(data);
+    if (res.success) {
+      onSuccess(res);
+      return;
+    }
+    onError(res);
+  } catch (error) {
+    onError(error);
+  } finally {
+    setIsLoading(false);
+  }
+};

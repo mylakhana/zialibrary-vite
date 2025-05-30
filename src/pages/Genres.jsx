@@ -1,29 +1,50 @@
-import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { handleGetGenre } from "../services/api_helper";
+import { NoResultsFound } from "../components/CustomElements";
 
 function Genres() {
   const navigate = useNavigate();
-  const { genres } = useSelector((state) => state.data);
+  const [genres, setGenres] = useState([]);
+  const [filteredGenres, setFilteredGenres] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const handleGenreClick = (genre) => {
-    navigate(`/genre/${genre.id}`);
-  };
+  useEffect(() => {
+    handleGetGenre(
+      (response) => {
+        setGenres(response.data);
+        setFilteredGenres(response.data);
+        setIsLoading(false);
+      },
+      (error) => {
+        setError(error);
+        setIsLoading(false);
+      },
+      setIsLoading
+    );
+  }, []);
 
-  if (genres.loading) {
+  useEffect(() => {
+    const filtered = genres.filter((genre) =>
+      genre.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredGenres(filtered);
+  }, [searchQuery, genres]);
+
+  if (isLoading) {
     return (
-      <div className="min-h-screen bg-surface flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      <div className="min-h-screen bg-surface p-8 flex items-center justify-center">
+        <div className="text-on-surface">Loading...</div>
       </div>
     );
   }
 
-  if (genres.error) {
+  if (error) {
     return (
-      <div className="min-h-screen bg-surface flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-error mb-2">Error Loading Genres</h2>
-          <p className="text-on-surface-variant">{genres.error}</p>
-        </div>
+      <div className="min-h-screen bg-surface p-8 flex items-center justify-center">
+        <div className="text-error">Error loading genres</div>
       </div>
     );
   }
@@ -43,12 +64,32 @@ function Genres() {
           </button>
           <h1 className="text-4xl font-bold">Genres</h1>
         </div>
+
+        {/* Search Bar */}
+        <div className="relative mb-8">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <svg className="w-5 h-5 text-on-surface-variant" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search genres..."
+            className="w-full pl-10 pr-4 py-3 bg-surface-container text-on-surface rounded-xl focus:outline-none focus:ring-2 focus:ring-primary"
+          />
+        </div>
       </div>
 
       {/* Genres Grid */}
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {genres.data.map((genre) => (
+      
+        {filteredGenres.length === 0 ? (
+          <NoResultsFound message="No genres found" />
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredGenres.map((genre) => (
             <div
               key={genre.id}
               onClick={() => handleGenreClick(genre)}
@@ -67,12 +108,12 @@ function Genres() {
                   <p className="text-sm text-gray-300 mb-2">{genre.subtitle}</p>
                   <p className="text-sm text-gray-400 mb-3">{genre.description}</p>
                   <div className="flex items-center justify-between text-sm text-gray-300">
-                    {genre.trackCount && (
+                    {genre.tracks && (
                       <div className="flex items-center">
                         <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
                         </svg>
-                        {genre.trackCount} Tracks
+                        {genre.tracks} Tracks
                       </div>
                     )}
                   </div>
@@ -81,6 +122,7 @@ function Genres() {
             </div>
           ))}
         </div>
+        )}
       </div>
     </div>
   );

@@ -8,14 +8,14 @@ import {
 import MainLayout from "./layouts/MainLayout";
 import ComingSoon from "./components/ComingSoon";
 import Home from "./pages/Home";
-import Album from "./pages/Album";
 import Search from "./pages/Search";
-import Albums from "./pages/Albums";
-import CategoryAlbums from "./pages/CategoryAlbums";
+import Playlists from "./pages/Playlists";
 import Artists from "./pages/Artists";
 import Artist from "./pages/Artist";
 import Genres from "./pages/Genres";
 import Genre from "./pages/Genre";
+import Playlist from "./pages/Playlist";
+import Album from "./pages/Album";
 
 function App() {
   return (
@@ -29,9 +29,10 @@ function App() {
           <Route index element={<Home />} />
           <Route path="/home" element={<Home />} />
           <Route path="/search" element={<Search />} />
-          <Route path="/albums" element={<Albums />} />
-          <Route path="/albums/category/:categoryId" element={<CategoryAlbums />} />
+          <Route path="/playlists" element={<Playlists />} />
+          <Route path="/playlist/:id" element={<Playlist />} />
           <Route path="/album/:id" element={<Album />} />
+          {/* <Route path="/albums/category/:categoryId" element={<CategoryAlbums />} /> */}
           <Route path="artists" element={<Artists />} />
           <Route path="artist/:id" element={<Artist />} />
           <Route path="genres" element={<Genres />} />
